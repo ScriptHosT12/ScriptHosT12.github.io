@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!--<script src="js.js" type="text/javascript"></script>-->
+    <style>
+        p {
+            font-family: Verdana;
+        }
+
+        button {
+            background-color: rgb(0, 190, 255);
+            color: rgb(0, 0, 0);
+            border-radius: 5px;
+            border-color: rgb(0, 190, 255);
+        }
+
+        input {
+            border-radius: 5px;
+        }
+
+        .listButtons {
+            background-color: rgba(0, 0, 0, 0);
+            border-width: 0px;
+        }
+    </style>
+    <script>
+        things = []
+
+        function deleteAll() {
+            if (confirm("do you relly want to delete the quiz?")) {
+                things = []
+            }
+        }
+
+        function hide(obj) {
+            document.getElementById(obj).style.display = "none"
+        };
+
+        function show(obj) {
+            document.getElementById(obj).style.display = "block"
+        };
+
+        function editor() {
+		attList()
+            hide("main");
+            show("editor");
+            hide("questionSettings");
+            hide("movePannel");
+            hide("compiler");
+            show("choosing_type")
+        };
+
+        function answer() {
+            hide("main");
+            show("answer");
+            corrects = 0;
+            number = -1;
+            upgradeAnswers()
+        }
+
+        function multipleqst() {
+            hide('choosing_type');
+            show("compiler");
+            show("multi");
+            resetInputs()
+        }
+
+        function solidAnsw() {
+            hide('choosing_type');
+            show("compiler");
+            show("singl");
+            resetInputs()
+        }
+
+        function getId(obj) {
+            return document.getElementById(obj)
+        }
+
+        function upgradeAnswers() {
+            if (number != -1) {
+                pointer=document.createElement("div")
+                getId("answersStats").appendChild(pointer)
+                pointer.style.height="10px"
+                pointer.style.width="10px"
+                pointer.style.size= 5
+                pointer.style.backgroundColor="#ff0000"
+                if (things[number].type == "single") {
+                    if (getId("answerANSWER").value == things[number].answer) {
+                        corrects++
+                        pointer.style.backgroundColor="green"
+                    }
+                } else {
+                    cont = "";
+                    for (i = 1; i < 5; i++) {
+                        cont = cont + (getId("multiANSWER" + i + "check").checked ? "y" : "n")
+                    };
+                    if (cont == things[number].correctPh) {
+                        corrects++
+                        pointer.style.backgroundColor="#00ff00"
+                    }
+                }
+            } else {getId("answersStats").innerHTML=""};
+            number++;
+            if (number == things.length) {
+                alert(corrects + " corrects")
+                show("main");
+                hide("answer")
+            } else {
+                hide("singlANSWER");
+                hide("multiANSWER");
+                resetInputs();
+                if (things[number].type == "multi") {
+                    show("multiANSWER");
+                    getId("multiANSWERqst").innerHTML = things[number].question
+                    for (i = 0; i != 4; i++) {
+                        getId("multiANSWER" + (i + 1)).innerHTML = things[number].answers[i]
+                    }
+                } else {
+                    show("singlANSWER");
+                    getId("questionANSWER").innerHTML = things[number].question
+                }
+            }
+        }
+
+        function resetInputs() {
+            getId("singlqst").value = "";
+            getId("singlansw").value = ""
+            getId("multiqst").value = ""
+            getId("multi1").value = ""
+            getId("multi2").value = ""
+            getId("multi3").value = ""
+            getId("multi4").value = ""
+            getId("multi1check").checked = false
+            getId("multi2check").checked = false
+            getId("multi3check").checked = false
+            getId("multi4check").checked = false
+            getId("multiANSWER1check").checked = false
+            getId("multiANSWER2check").checked = false
+            getId("multiANSWER3check").checked = false
+            getId("multiANSWER4check").checked = false
+            getId("answerANSWER").value = ""
+        }
+
+        function singlaccept() {
+            if (getId("singlqst").value == "") {
+                getId("singlqst").style.background = "red"
+            } else if (getId("singlansw").value == "") {
+                getId("singlansw").style.background = "red"
+            } else {
+                things[things.length] = {
+                    type: "single",
+                    question: getId("singlqst").value,
+                    answer: getId("singlansw").value
+
+                };
+                hide("singl")
+                show("choosing_type")
+                hide("progress")
+            }
+            attList()
+        }
+
+        function getCode() {
+            if (getId("codeInput").style.display == "none") {
+                getId("codeInput").style.display = "block";
+                getId("codeInput").value = encodeURIComponent(JSON.stringify(things))
+            } else {
+                try {
+                    things = JSON.parse(decodeURIComponent(getId("codeInput").value))
+                } catch (err) {
+                    alert("something went wrong on the code")
+                };
+                getId("codeInput").style.display = "none"
+            }
+        }
+
+        function multiaccept() {
+            getId("multiqst").style.background = "white"
+            getId("multi1").style.background = "white"
+            getId("multi2").style.background = "white"
+            getId("multi3").style.background = "white"
+            getId("multi4").style.background = "white"
+            if (getId("multiqst").value == "") {
+                getId("multiqst").style.background = "red"
+            } else if (getId("multi1").value == "") {
+                getId("multi1").style.background = "red"
+            } else if (getId("multi2").value == "") {
+                getId("multi2").style.background = "red"
+            } else if (getId("multi3").value == "") {
+                getId("multi3").style.background = "red"
+            } else if (getId("multi4").value == "") {
+                getId("multi4").style.background = "red"
+            } else if ((!getId("multi1check").checked) && (!getId("multi2check").checked) && (!getId("multi3check").checked) && (!getId("multi4check").checked)) {
+                getId("multi1check").style.background = "red"
+                getId("multi2check").style.background = "red"
+                getId("multi3check").style.background = "red"
+                getId("multi4check").style.background = "red"
+            } else if ((getId("multi1check").checked) && (getId("multi2check").checked) && (getId("multi3check").checked) && (getId("multi4check").checked)) {
+                getId("multi1check").style.background = "red"
+                getId("multi2check").style.background = "red"
+                getId("multi3check").style.background = "red"
+                getId("multi4check").style.background = "red"
+            } else {
+                show("progress")
+                getId("progress").value = 0
+                getId("progress").max = 2
+                case_ = ""
+                for (i = 1; i < 5; i++) {
+                    case_ = case_ + (getId("multi" + i + "check").checked ? "y" : "n")
+                }
+                getId("progress").value = 1
+                things[things.length] = {
+                    type: "multi",
+                    question: getId("multiqst").value,
+                    answers: [getId("multi1").value, getId("multi2").value, getId("multi3").value, getId("multi4").value],
+                    correctPh: case_
+                }
+                getId("progress").value = 2
+                hide("multi")
+                show("choosing_type")
+                hide("progress")
+            }
+            attList()
+        }
+
+        function menuReturn() {
+            show("main")
+            hide("editor")
+        }
+        //%5B%7B%22type%22%3A%22multi%22%2C%22question%22%3A%22ad%22%2C%22answers%22%3A%5B%22sd%22%2C%22df%22%2C%22gfgh%22%2C%22h%22%5D%2C%22correctPh%22%3A%22nynn%22%7D%2C%7B%22type%22%3A%22multi%22%2C%22question%22%3A%22asd%22%2C%22answers%22%3A%5B%22gdf%22%2C%22dfsa%22%2C%22ghfd%22%2C%22sdfasd%22%5D%2C%22correctPh%22%3A%22nnyn%22%7D%2C%7B%22type%22%3A%22single%22%2C%22question%22%3A%22asd%22%2C%22answer%22%3A%22dfsafds%22%7D%2C%7B%22type%22%3A%22multi%22%2C%22question%22%3A%22asedff%22%2C%22answers%22%3A%5B%22asdfsd%22%2C%22asdf%22%2C%22asef%22%2C%22asefd%22%5D%2C%22correctPh%22%3A%22nnny%22%7D%5D
+        function helpCnf() {
+            if (document.getElementsByClassName("helpersMain")[0].style.display == "block") {
+                for (i = 0; i < document.getElementsByClassName("helpersMain").length; i++) {
+                    document.getElementsByClassName("helpersMain")[i].style.display = "none"
+                }
+            } else {
+                for (i = 0; i < document.getElementsByClassName("helpersMain").length; i++) {
+                    document.getElementsByClassName("helpersMain")[i].style.display = "block"
+                }
+            }
+        }
+function array_move(arr, old_index, new_index) {
+    if (new_index >= arr.length) {
+        var k = new_index - arr.length + 1;
+        while (k--) {
+            arr.push(undefined);
+        }
+    }
+    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+    return arr; // for testing
+};
+        function moveSingle(token, destination) {
+            array_move(things,token,destination);
+            editor();
+        }
+
+        function showMoveSingle() {
+            getId("movePannel").innerHTML = "";
+            strf = ""
+            for (i = 0; i < things.length; i++) {
+                strf = strf + "<button style=\"width:100px;height:20px;color:red;border-width:0px\" onclick=\"moveSingle(selected," + i + ")\"></button><p>" + (things[i].type == "single" ? "single question" : "multiple question") + " with question " + things[i].question + (things[i].type == "single" ? " with answer " + things[i].answer : " with possible answers " + things[i].answers.join(", ")) + "</p><br/>"
+            }
+            getId("movePannel").innerHTML = strf
+            show("movePannel")
+        }
+
+        function selectQuestion(button,token) {
+            selected = token;
+            hide("choosing_type");
+            show("questionSettings");
+			getId("questionSettings").lastChild.innerHTML=button.innerHTML
+        }
+
+        function removeSingle(token) {
+            editor();
+            things[token] = null;
+            tmpL = [];
+            for (i = 0; i < things.length; i++) {
+                if (!(things[i] == null)) {
+                    tmpL[tmpL.length] = things[i]
+                }
+            };
+            things = tmpL;
+            attList()
+        }
+		function cloneSingle(token) {things[things.length]=things[token];editor()}
+        function attList() {
+            getId("quizListage").innerHTML = "";
+            strf = "";
+            for (i = 0; i < things.length; i++) {
+                strf = strf + "<button class=\"listButtons\" onclick=\"selectQuestion(this," + i + ")\">" + (things[i].type == "single" ? "single question" : "multiple question") + " with question " + things[i].question + (things[i].type == "single" ? " with answer " + things[i].answer : " with possible answers " + things[i].answers.join(", ")) + "</button><br/>"
+            };
+            getId("quizListage").innerHTML = strf
+        }
+    </script>
+    <title>Quiz maker!</title>
+</head>
+
+<body>
+    <div id="main">
+        <table>
+            <tr>
+                <td>
+                    <button onclick="editor()">editor</button>
+                </td>
+                <td>
+                    <button onclick="answer()">answer</button>
+                </td>
+                <td>
+                    <button onclick="getCode()" inactive>get/set code</button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <p class="helpersMain" style="display:none">edits the quiz</p>
+                </td>
+                <td>
+                    <p class="helpersMain" style="display:none">runs the loaded quiz</p>
+                </td>
+                <td>
+                    <p class="helpersMain" style="display:none">loads a quiz</p>
+                </td>
+            </tr>
+        </table>
+        <button onclick="helpCnf()">help</button>
+        <input id="codeInput" style="display:none" />
+    </div>
+    <div id="editor" style="display:none">
+        <div id="movePannel"></div>
+        <div id="questionSettings" style="display:none"><button onclick="removeSingle(selected)">remove</button><button onclick="showMoveSingle()">move</button><button onclick="cloneSingle(selected)">clone</button><button onclick="editor()">return</button><br/><p></p></div>
+        <div id="choosing_type">
+            <button onclick="multipleqst()">multiple question</button>
+            <button onclick="solidAnsw()">only answer</button>
+            <br/>
+
+            <button onclick="menuReturn()">back</button>
+            <p>this quiz</p>
+            <button onclick="deleteAll()" style="color:red">delete all</button>
+            <div id="quizListage"></div><button onclick="attList()">att the list</button>
+        </div>
+        <div id="compiler" style="display:none">
+            <div id="multi" style="display:none">
+                <input placeholder="question" id="multiqst" />
+                <br/>
+                <input placeholder="option 1" id="multi1" />
+                <input type="checkbox" id="multi1check" />
+                <br/>
+                <input placeholder="option 2" id="multi2" />
+                <input type="checkbox" id="multi2check" />
+                <br/>
+                <input placeholder="option 3" id="multi3" />
+                <input type="checkbox" id="multi3check" />
+                <br/>
+                <input placeholder="option 4" id="multi4" />
+                <input type="checkbox" id="multi4check" />
+                <br/>
+                <br/>
+                <button id="multiAccepter" onclick="multiaccept()">ok</button>
+            </div>
+            <div id="singl" style="display:none">
+                <input placeholder="question" id="singlqst"/>
+                <br/>
+                <input placeholder="answer" id="singlansw"/>
+                <button id="singlAccepter" onclick="singlaccept()">ok</button>
+            </div>
+        </div>
+    </div>
+    <div id="answer" style="display:none">
+        <table><tr><td><div id="answersStats"></div></td><td>
+        <div id="multiANSWER">
+            <p id="multiANSWERqst"></p>
+            <table>
+                <tr>
+                    <td>
+                        <p id="multiANSWER1"></p>
+                    </td>
+                    <td>
+                        <input type="checkbox" id="multiANSWER1check" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p id="multiANSWER2"></p>
+                    </td>
+                    <td>
+                        <input type="checkbox" id="multiANSWER2check" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p id="multiANSWER3"></p>
+                    </td>
+                    <td>
+                        <input type="checkbox" id="multiANSWER3check" />
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p id="multiANSWER4"></p>
+                    </td>
+                    <td>
+                        <input type="checkbox" id="multiANSWER4check" />
+                    </td>
+                </tr>
+            </table>
+            <br>
+            <button onclick="upgradeAnswers()">next</button>
+        </div>
+        <div id="singlANSWER">
+            <p id="questionANSWER"></p>
+            <input id="answerANSWER" />
+            <button onclick="upgradeAnswers()">next</button>
+        </div>
+         </td></tr></table>
+    </div>
+    <progress id="progress" min="0" max="100" value="0" style="display:none" ></progress>
+</body>
+
+</html>
