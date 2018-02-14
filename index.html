@@ -42,7 +42,7 @@
         };
 
         function editor() {
-		attList()
+            attList()
             hide("main");
             show("editor");
             hide("questionSettings");
@@ -79,16 +79,17 @@
 
         function upgradeAnswers() {
             if (number != -1) {
-                pointer=document.createElement("div")
+                pointer = document.createElement("p")
                 getId("answersStats").appendChild(pointer)
-                pointer.style.height="10px"
-                pointer.style.width="10px"
-                pointer.style.size= 5
-                pointer.style.backgroundColor="#ff0000"
+                pointer.style.height = "10px"
+                pointer.style.width = "10px"
+                pointer.innerHTML = number + 1
+                pointer.style.size = 5
+                pointer.style.backgroundColor = "#ff0000"
                 if (things[number].type == "single") {
                     if (getId("answerANSWER").value == things[number].answer) {
                         corrects++
-                        pointer.style.backgroundColor="green"
+                        pointer.style.backgroundColor = "green"
                     }
                 } else {
                     cont = "";
@@ -97,10 +98,12 @@
                     };
                     if (cont == things[number].correctPh) {
                         corrects++
-                        pointer.style.backgroundColor="#00ff00"
+                        pointer.style.backgroundColor = "#00ff00"
                     }
                 }
-            } else {getId("answersStats").innerHTML=""};
+            } else {
+                getId("answersStats").innerHTML = ""
+            };
             number++;
             if (number == things.length) {
                 alert(corrects + " corrects")
@@ -240,18 +243,43 @@
                 }
             }
         }
-function array_move(arr, old_index, new_index) {
-    if (new_index >= arr.length) {
-        var k = new_index - arr.length + 1;
-        while (k--) {
-            arr.push(undefined);
+
+        function setCookie(cname, cvalue, exdays) {
+            var d = new Date();
+            d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
         }
-    }
-    arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
-    return arr; // for testing
-};
+
+        function getCookie(cname) {
+            var name = cname + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var ca = decodedCookie.split(';');
+            for (var i = 0; i < ca.length; i++) {
+                var c = ca[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(name) == 0) {
+                    return c.substring(name.length, c.length);
+                }
+            }
+            return "";
+        }
+
+        function array_move(arr, old_index, new_index) {
+            if (new_index >= arr.length) {
+                var k = new_index - arr.length + 1;
+                while (k--) {
+                    arr.push(undefined);
+                }
+            }
+            arr.splice(new_index, 0, arr.splice(old_index, 1)[0]);
+            return arr; // for testing
+        };
+
         function moveSingle(token, destination) {
-            array_move(things,token,destination);
+            array_move(things, token, destination);
             editor();
         }
 
@@ -265,11 +293,11 @@ function array_move(arr, old_index, new_index) {
             show("movePannel")
         }
 
-        function selectQuestion(button,token) {
+        function selectQuestion(button, token) {
             selected = token;
             hide("choosing_type");
             show("questionSettings");
-			getId("questionSettings").lastChild.innerHTML=button.innerHTML
+            getId("questionSettings").lastChild.innerHTML = button.innerHTML
         }
 
         function removeSingle(token) {
@@ -284,7 +312,12 @@ function array_move(arr, old_index, new_index) {
             things = tmpL;
             attList()
         }
-		function cloneSingle(token) {things[things.length]=things[token];editor()}
+
+        function cloneSingle(token) {
+            things[things.length] = things[token];
+            editor()
+        }
+
         function attList() {
             getId("quizListage").innerHTML = "";
             strf = "";
@@ -293,11 +326,53 @@ function array_move(arr, old_index, new_index) {
             };
             getId("quizListage").innerHTML = strf
         }
+
+        function dismissPopup() {
+            hide("floaters")
+        }
+
+        function loadPopup(title, yesConfirm, noConfirm, yesImpulse, noImpulse) {
+            getId("floaters").innerHTML = "";
+            p = document.createElement("p");
+            p.innerHTML = title;
+            yesButton = document.createElement("button");
+            yesButton.innerHTML = yesConfirm;
+            noButton = document.createElement("button");
+            noButton.innerHTML = noConfirm;
+            yesButton.addEventListener("click", yesImpulse);
+            noButton.addEventListener("click", noImpulse);
+            f = getId("floaters");
+            f.appendChild(p);
+            f.appendChild(yesButton);
+            f.appendChild(noButton);
+            yesButton.addEventListener("click", dismissPopup);
+            noButton.addEventListener("click", dismissPopup);
+            show("floaters")
+        }
+		function unableControl(){show("unablize")}
+		function enableControl(){hide("unablize")}
+        window.onload = function() {
+		for(i=0;i<document.getElementsByClassName("helpersMain").length;i++){document.getElementsByClassName("helpersMain")[i].style.display="none"}
+            getId("floaters").style.width = (screen.availWidth + 10) + "px";
+            getId("floaters").style.height = (screen.availHeight + 10) + "px";
+			getId("unablizeCentr").style.width = (screen.availWidth + 10) + "px";
+            getId("unablizeCentr").style.height = (screen.availHeight + 10) + "px";
+            try {
+                if (getCookie("entered") == "") {
+				setCookie("entered"," ",Math.pow(9999,9999))
+                    loadPopup("looks like this is the first time you're playing this! Do you need help?", "maybe yes...", "no not!",helpCnf, enableControl)
+                }
+            } catch (err) {
+                loadPopup("I can't know if you have already played this, but do you want help?", "maybe yes...", "no not!", helpCnf, enableControl)
+            }
+        }
     </script>
     <title>Quiz maker!</title>
 </head>
 
 <body>
+<div id="unablize" style="display:none"><div style="text-align:center;margin:auto;position:fixed;top:-5px;left:-5px;background:rgb(100,100,100);opacity:0" id="unablizeCentr"></div><p style="text-align:right;position:fixed;width:95%">control disabled</p></div>
+    <div style="text-align:center;margin:auto;position:fixed;top:-5px;left:-5px;background:rgb(100,100,100);opacity:0.9" id="floaters"></div>
     <div id="main">
         <table>
             <tr>
@@ -323,24 +398,26 @@ function array_move(arr, old_index, new_index) {
                 </td>
             </tr>
         </table>
-        <button onclick="helpCnf()">help</button>
+        <button onclick="helpCnf()">help</button><p class="helpersMain">this text toggler</p>
         <input id="codeInput" style="display:none" />
     </div>
     <div id="editor" style="display:none">
         <div id="movePannel"></div>
-        <div id="questionSettings" style="display:none"><button onclick="removeSingle(selected)">remove</button><button onclick="showMoveSingle()">move</button><button onclick="cloneSingle(selected)">clone</button><button onclick="editor()">return</button><br/><p></p></div>
+        <div id="questionSettings" style="display:none"><button onclick="removeSingle(selected)">remove</button><button onclick="showMoveSingle()">move</button><button onclick="cloneSingle(selected)">clone</button><button onclick="editor()">return</button><br/>
+            <p></p>
+        </div>
         <div id="choosing_type">
-            <button onclick="multipleqst()">multiple question</button>
-            <button onclick="solidAnsw()">only answer</button>
+            <button onclick="multipleqst()">multiple question</button><p class="helpersMain">creates a multi question ready to edit</p>
+            <button onclick="solidAnsw()">only answer</button><p class="helpersMain">creates a multi question ready to edit</p>
             <br/>
 
-            <button onclick="menuReturn()">back</button>
+            <button onclick="menuReturn()">back</button><p class="helpersMain">goes back</p>
             <p>this quiz</p>
-            <button onclick="deleteAll()" style="color:red">delete all</button>
-            <div id="quizListage"></div><button onclick="attList()">att the list</button>
+            <button onclick="deleteAll()" style="color:red">delete all</button><p class="helpersMain">deletes the quiz</p>
+            <div id="quizListage"></div><button onclick="attList()">att the list</button><p class="helpersMain">if you think the list is mistaken, you can actualize</p>
         </div>
         <div id="compiler" style="display:none">
-            <div id="multi" style="display:none">
+            <div id="multi" style="display:none"><p class="helpersMain">edit the multi quiz</p>
                 <input placeholder="question" id="multiqst" />
                 <br/>
                 <input placeholder="option 1" id="multi1" />
@@ -356,65 +433,72 @@ function array_move(arr, old_index, new_index) {
                 <input type="checkbox" id="multi4check" />
                 <br/>
                 <br/>
-                <button id="multiAccepter" onclick="multiaccept()">ok</button>
+                <button id="multiAccepter" onclick="multiaccept()">ok</button><p class="helpersMain">accept</p>
             </div>
-            <div id="singl" style="display:none">
-                <input placeholder="question" id="singlqst"/>
+            <div id="singl" style="display:none"><p class="helpersMain">edit the single quiz</p>
+                <input placeholder="question" id="singlqst" />
                 <br/>
-                <input placeholder="answer" id="singlansw"/>
-                <button id="singlAccepter" onclick="singlaccept()">ok</button>
+                <input placeholder="answer" id="singlansw" />
+                <button id="singlAccepter" onclick="singlaccept()">ok</button><p class="helpersMain">accept</p>
             </div>
         </div>
     </div>
     <div id="answer" style="display:none">
-        <table><tr><td><div id="answersStats"></div></td><td>
-        <div id="multiANSWER">
-            <p id="multiANSWERqst"></p>
-            <table>
-                <tr>
-                    <td>
-                        <p id="multiANSWER1"></p>
-                    </td>
-                    <td>
-                        <input type="checkbox" id="multiANSWER1check" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p id="multiANSWER2"></p>
-                    </td>
-                    <td>
-                        <input type="checkbox" id="multiANSWER2check" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p id="multiANSWER3"></p>
-                    </td>
-                    <td>
-                        <input type="checkbox" id="multiANSWER3check" />
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p id="multiANSWER4"></p>
-                    </td>
-                    <td>
-                        <input type="checkbox" id="multiANSWER4check" />
-                    </td>
-                </tr>
-            </table>
-            <br>
-            <button onclick="upgradeAnswers()">next</button>
-        </div>
-        <div id="singlANSWER">
-            <p id="questionANSWER"></p>
-            <input id="answerANSWER" />
-            <button onclick="upgradeAnswers()">next</button>
-        </div>
-         </td></tr></table>
+        <table>
+            <tr>
+                <td>
+                    <div id="answersStats"></div>
+                </td>
+                <td>
+                    <div id="multiANSWER">
+                        <p id="multiANSWERqst"></p>
+                        <table>
+                            <tr>
+                                <td>
+                                    <p id="multiANSWER1"></p>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="multiANSWER1check" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p id="multiANSWER2"></p>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="multiANSWER2check" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p id="multiANSWER3"></p>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="multiANSWER3check" />
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <p id="multiANSWER4"></p>
+                                </td>
+                                <td>
+                                    <input type="checkbox" id="multiANSWER4check" />
+                                </td>
+                            </tr>
+                        </table>
+                        <br>
+                        <button onclick="upgradeAnswers()">next</button>
+                    </div>
+                    <div id="singlANSWER">
+                        <p id="questionANSWER"></p>
+                        <input id="answerANSWER" />
+                        <button onclick="upgradeAnswers()">next</button>
+                    </div>
+                </td>
+            </tr>
+        </table>
     </div>
-    <progress id="progress" min="0" max="100" value="0" style="display:none" ></progress>
+    <progress id="progress" min="0" max="100" value="0" style="display:none"></progress>
 </body>
 
 </html>
