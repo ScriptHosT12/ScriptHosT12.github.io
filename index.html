@@ -359,7 +359,7 @@
             getId("unablizeCentr").style.height = (screen.availHeight + 10) + "px";
             try {
                 if (getCookie("entered") == "") {
-				setCookie("entered"," ",Math.pow(9999,9999))
+				setCookie("entered","already",Math.pow(9999,9999))
                     loadPopup("looks like this is the first time you're playing this! Do you need help?", "maybe yes...", "no not!",helpCnf, enableControl)
                 }
             } catch (err) {
