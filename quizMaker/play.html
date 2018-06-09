@@ -14,7 +14,7 @@
   border-radius: 28px;
   font-family: Arial;
   color: #ffffff;
-  font-size: 20px;
+  font-size: 13px;
   padding: 10px 20px 10px 20px;
   text-decoration: none;
 }
@@ -30,10 +30,19 @@
 }
 body{background: rgb(2,0,36);
 background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,109,1) 4%, rgba(0,212,255,1) 100%);}</style>
+<script>
+		function deleteAllFromElement(el){
+		while (el.firstChild) {
+		el.removeChild(el.firstChild);
+		}
+		}
+		function actualize(){
+		deleteAllFromElement(document.getElementFromId("buttonPannel")
+		}
+		m=JSON.parse(decodeURIComponent(prompt("type in xml")))
+		playingId=0//[{"title":"hi","buttons":[{"text":"this one","id":1},{"text":"other one","id":2}}]</script>
 	</head>
 	<body>
-	  <div align="center">
-		<button class="btn" onclick="location.href = '/play.html'">go in a typed adventure!</button>
-		<button class="btn" onclick="location.href = '/create.html'">create a typed adventure!</button></div>
+		<div id="pannel"><p></p><div id="buttonPannel"></div></div>
 	</body>
 </html>
