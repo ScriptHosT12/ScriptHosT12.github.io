@@ -36,13 +36,22 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,109,1) 4%, rgba
 		el.removeChild(el.firstChild);
 		}
 		}
+		function goTo(n){
+		m=n
+		actualize()
+		}
 		function actualize(){
-		deleteAllFromElement(document.getElementFromId("buttonPannel")
+		deleteAllFromElement(document.getElementFromId("buttonPannel"))
+		document.getElementFromId("titles").removeChild(document.getElementFromId("titles").firstChild)
+		document.getElementFromId("titles").appendChild(document.createTextNode(m[playingId].title))
+		for(x=0;x<m[playingId].buttons.length;x++){
+		document.getElementFromId("buttonPannel").innerHTML=document.getElementFromId("buttonPannel").innerHTML+"<button onclick='goTo("+m[playingId].buttons[x].id+")'>"+m[playingId].buttons[x].text+"</button>"
+		}
 		}
 		m=JSON.parse(decodeURIComponent(prompt("type in xml")))
-		playingId=0//[{"title":"hi","buttons":[{"text":"this one","id":1},{"text":"other one","id":2}}]</script>
+		playingId=0//{"0":{"title":"hi","buttons":[{"text":"this one","id":1},{"text":"other one","id":2}}}</script>
 	</head>
 	<body>
-		<div id="pannel"><p></p><div id="buttonPannel"></div></div>
+		<div id="pannel"><p id="titles"></p><div id="buttonPannel"></div></div>
 	</body>
 </html>
