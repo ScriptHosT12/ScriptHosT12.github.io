@@ -41,11 +41,11 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,109,1) 4%, rgba
 		actualize()
 		}
 		function actualize(){
-		deleteAllFromElement(document.getElementFromId("buttonPannel"))
-		document.getElementFromId("titles").removeChild(document.getElementFromId("titles").firstChild)
-		document.getElementFromId("titles").appendChild(document.createTextNode(m[playingId].title))
+		deleteAllFromElement(document.getElementById("buttonPannel"))
+		document.getElementById("titles").removeChild(document.getElementById("titles").firstChild)
+		document.getElementById("titles").appendChild(document.createTextNode(m[playingId].title))
 		for(x=0;x<m[playingId].buttons.length;x++){
-		document.getElementFromId("buttonPannel").innerHTML=document.getElementFromId("buttonPannel").innerHTML+"<button onclick='goTo("+m[playingId].buttons[x].id+")'>"+m[playingId].buttons[x].text+"</button>"
+		document.getElementById("buttonPannel").innerHTML=document.getElementById("buttonPannel").innerHTML+"<button onclick='goTo("+m[playingId].buttons[x].id+")'>"+m[playingId].buttons[x].text+"</button>"
 		}
 		}
 		m=JSON.parse(decodeURIComponent(prompt("type in xml")))
