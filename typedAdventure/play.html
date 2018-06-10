@@ -42,7 +42,9 @@ background: linear-gradient(90deg, rgba(2,0,36,1) 0%, rgba(121,9,109,1) 4%, rgba
 		}
 		function actualize(){
 		deleteAllFromElement(document.getElementById("buttonPannel"))
+		if(document.getElementById("titles").firstChild){
 		document.getElementById("titles").removeChild(document.getElementById("titles").firstChild)
+		}
 		document.getElementById("titles").appendChild(document.createTextNode(m[playingId].title))
 		for(x=0;x<m[playingId].buttons.length;x++){
 		document.getElementById("buttonPannel").innerHTML=document.getElementById("buttonPannel").innerHTML+"<button onclick='goTo("+m[playingId].buttons[x].id+")'>"+m[playingId].buttons[x].text+"</button>"
